@@ -1,0 +1,8 @@
+The code provided will serve as a base for your coursework in Advanced Graphics.
+You can choose to implement your projects in either python or C/C++ at your convenience. For C/C++
+code, you may use the Makefile provided to compile or write your own.
+For python, first compile the library:
+make python
+and then import like any python package:
+from PNM import *
+The images once opened are stored in a numpy array. Tested and approved for python 2.7
