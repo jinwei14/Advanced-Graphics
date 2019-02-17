@@ -1,0 +1,31 @@
+Scale -1 1 1
+
+# All coodinate frames are right-handed
+
+LookAt 0 0 1    0 0 0   0 1 0 # Camera is at position [0,0,10], looking down the -z axis towards [0,0,0] with up vector +y
+Camera "orthographic"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [4]
+PixelFilter "box"
+
+Film "image" "integer xresolution" [511] "integer yresolution" [511] 
+     "string filename" ["simple_sphere.pfm"]
+
+SurfaceIntegrator "directlighting" "integer maxdepth" [4]
+    "string strategy" "all"
+
+WorldBegin
+
+# lights
+AttributeBegin
+  Rotate 90 1 0 0 
+  	 LightSource "infinite" "integer nsamples" [4] "color L" [8 8 8]
+	 "string mapname" ["textures/grace_latlong.exr"]
+AttributeEnd
+
+AttributeBegin
+	Material "matte" "rgb Kd" [1 1 1]
+	Shape "sphere" "float radius" [1]
+AttributeEnd
+
+WorldEnd
