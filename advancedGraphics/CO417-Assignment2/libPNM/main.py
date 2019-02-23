@@ -85,7 +85,7 @@ def Gamma(path_in, gamma, stop, path_out):
 
 import sys
 def MedianCutSampling(partitions):
-    index_list = []
+
 
     def cut(startRow,startCol,endRow,endCol,itr,intensity,copy):
         # image = img_in[startRow:endRow+1,startCol:endCol+1]
@@ -115,11 +115,13 @@ def MedianCutSampling(partitions):
             # print (endCol)
             # print (index)
             # print ('###################')
-            index_list.append('hha')
+            index_list.append((int(0.5 * (startRow + index)),int(0.5*(startCol+endCol))))
+            index_list.append((int(0.5 * (index + endRow)), int(0.5 * (startCol + endCol))))
             for w in range(width):
                 copy[startRow:endRow+1,startCol:endCol+1][index-startRow][w] = [255.0, 255.0, 255.0] # set sampling points to green
             cut(startRow, startCol, index, endCol, itr+1, intensity, copy)
             cut(index, startCol, endRow, endCol, itr+1, intensity, copy)
+
         else: # this will cut off the width
             index = 0 # which column will be cut off
             for w in range(startCol,endCol+1):
@@ -140,7 +142,9 @@ def MedianCutSampling(partitions):
             # print (endCol)
             # print (index)
             # print ('###################')
-            index_list.append('haha')
+            index_list.append((int(0.5*(startRow+endRow)),int(0.5*(startCol+index))))
+            index_list.append((int(0.5 * (startRow + endRow)), int(0.5 * (index + endCol))))
+
             for h in range(height):
                 copy[startRow:endRow+1,startCol:endCol+1][h][index-startCol] = [255.0, 255.0, 255.0] # se
             cut(startRow, startCol, endRow, index, itr+1, intensity, copy)
@@ -162,19 +166,32 @@ def MedianCutSampling(partitions):
 
     intensity = np.empty([height, width])
 
-
+    index_list = []
     for i in range(height):
         # temp = 0
         for j in range(width):
             intensity[i][j] = (img_in[i, j, 0]+img_in[i, j, 1]+img_in[i, j, 2])/3.0*np.sin((i/511.0)*np.pi) # Sum up the intensity of all pixels
 
     cut(0,0,height-1,width-1,0,intensity,img_in)
+
+   # set a 5*5 grid
+    for item in index_list:
+        print (item)
+        i,j = item[0],item[1]
+        img_in[i][j] = [0.0, 0.0, 1.0]
+        for row in range(i-2,i+3):
+            for col in range(j-2,j+3):
+                if (row == i-2 or row ==i+2 or col ==j-2 or col == j + 2 ):
+
+                    img_in[row][col] = [1.0, 1.0, 1.0]
+
+
+
+
     writePFM('../GraceCathedral/part3_partisons'+str(np.power(2,partitions))+'.pfm', img_in)
 
 
 if '__main__' == __name__:
-
-
     for i in [1,2,3,4,5,6,7,8]:
         print ('partisons' +str(np.power(2,i)))
         MedianCutSampling(i)

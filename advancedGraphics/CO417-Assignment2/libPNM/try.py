@@ -9,3 +9,6 @@ def MedianCutSampling(partitions):
     print img_in
 
 MedianCutSampling(2)
+
+
+print(int(1.5))
