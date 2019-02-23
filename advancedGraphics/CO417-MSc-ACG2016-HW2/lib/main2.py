@@ -337,8 +337,10 @@ def GenerateDiffuseBall(noOfSample, index_ij_p, sum_intensity):
     # GammaCorrection("part3_"+str(noOfSample)+".pfm", 1., 2.2, "part3_"+str(noOfSample)+".ppm")
     
 if '__main__' == __name__:
-    # print "Sampling started! (64 samples)"
-    # noOfSample,index_ij_p,sum_intensity = Sampling(64)
+    print "Sampling started! (32 samples)"
+    noOfSample,index_ij_p,sum_intensity = Sampling(32)
+    print "Sampling started! (64 samples)"
+    noOfSample,index_ij_p,sum_intensity = Sampling(64)
     # print "Sampling finished! (64 samples) Generating Diffuse Ball"
     # GenerateDiffuseBall(noOfSample,index_ij_p,sum_intensity)
     # print "Sampling started! (256 samples)"
