@@ -115,8 +115,9 @@ def MedianCutSampling(partitions):
             # print (endCol)
             # print (index)
             # print ('###################')
-            index_list.append((int(0.5 * (startRow + index)),int(0.5*(startCol+endCol))))
-            index_list.append((int(0.5 * (index + endRow)), int(0.5 * (startCol + endCol))))
+            if itr==partitions-1:
+                index_list.append((int(0.5 * (startRow + index)),int(0.5*(startCol+endCol))))
+                index_list.append((int(0.5 * (index + endRow)), int(0.5 * (startCol + endCol))))
             for w in range(width):
                 copy[startRow:endRow+1,startCol:endCol+1][index-startRow][w] = [255.0, 255.0, 255.0] # set sampling points to green
             cut(startRow, startCol, index, endCol, itr+1, intensity, copy)
@@ -142,8 +143,9 @@ def MedianCutSampling(partitions):
             # print (endCol)
             # print (index)
             # print ('###################')
-            index_list.append((int(0.5*(startRow+endRow)),int(0.5*(startCol+index))))
-            index_list.append((int(0.5 * (startRow + endRow)), int(0.5 * (index + endCol))))
+            if itr == partitions - 1:
+                index_list.append((int(0.5*(startRow+endRow)),int(0.5*(startCol+index))))
+                index_list.append((int(0.5 * (startRow + endRow)), int(0.5 * (index + endCol))))
 
             for h in range(height):
                 copy[startRow:endRow+1,startCol:endCol+1][h][index-startCol] = [255.0, 255.0, 255.0] # se
@@ -183,7 +185,7 @@ def MedianCutSampling(partitions):
             for col in range(j-2,j+3):
                 if (row == i-2 or row ==i+2 or col ==j-2 or col == j + 2 ):
 
-                    img_in[row][col] = [1.0, 1.0, 1.0]
+                    img_in[row][col] = [0.0, 0.0, 1.0]
 
 
 
