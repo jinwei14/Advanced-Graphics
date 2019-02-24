@@ -17,3 +17,5 @@ import numpy as np
 tryarr = np.array([[1,2,3],[1,2,3]])
 
 print (tryarr/float(3))*255
+
+print (np.sum(tryarr))
