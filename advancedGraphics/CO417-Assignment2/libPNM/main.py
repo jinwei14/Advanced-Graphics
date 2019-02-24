@@ -256,11 +256,11 @@ def MedianCutSampling(partitions):
 
 
 if '__main__' == __name__:
-    for i in [1,2,3,4,5,6,7,8]:
-        print ('partisons' +str(np.power(2,i)))
-        # MedianCutSampling(i)
-        Gamma('../GraceCathedral/part3_partisons' + str(np.power(2, i)) + '.pfm', 1.8, 3, '../GraceCathedral/part3_partisons_gamma' + str(np.power(2, i)) + '.ppm')
-
-
+    # for i in [1,2,3,4,5,6,7,8]:
+    #     print ('partisons' +str(np.power(2,i)))
+    #     # MedianCutSampling(i)
+    #     Gamma('../GraceCathedral/part3_partisons' + str(np.power(2, i)) + '.pfm', 1.8, 3, '../GraceCathedral/part3_partisons_gamma' + str(np.power(2, i)) + '.ppm')
+    #
+    pass
 
 
