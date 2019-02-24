@@ -84,6 +84,7 @@ def Gamma(path_in, gamma, stop, path_out):
     writePPM(path_out, imageOut.astype(np.uint8))
 
 import sys
+
 def MedianCutSampling(partitions):
 
 
@@ -118,6 +119,13 @@ def MedianCutSampling(partitions):
             if itr==partitions-1:
                 index_list.append((int(0.5 * (startRow + index)),int(0.5*(startCol+endCol))))
                 index_list.append((int(0.5 * (index + endRow)), int(0.5 * (startCol + endCol))))
+                if partitions == 6:
+                    index_64_list.append([np.sum(img_in[startRow:index+1,startCol:endCol+1,0]),
+                                         np.sum(img_in[startRow:index+1,startCol:endCol+1,1]),
+                                         np.sum(img_in[startRow:index+1,startCol:endCol+1,2])])
+                    index_64_list.append([np.sum(img_in[index:endRow+1,startCol:endCol+1,0]),
+                                         np.sum(img_in[index:endRow+1,startCol:endCol+1,1]),
+                                         np.sum(img_in[index:endRow+1,startCol:endCol+1,2])])
             for w in range(width):
                 copy[startRow:endRow+1,startCol:endCol+1][index-startRow][w] = [255.0, 255.0, 255.0] # set sampling points to green
             cut(startRow, startCol, index, endCol, itr+1, intensity, copy)
@@ -147,6 +155,15 @@ def MedianCutSampling(partitions):
                 index_list.append((int(0.5*(startRow+endRow)),int(0.5*(startCol+index))))
                 index_list.append((int(0.5 * (startRow + endRow)), int(0.5 * (index + endCol))))
 
+                if partitions == 6:
+
+                    index_64_list.append([np.sum(img_in[startRow:endRow + 1, startCol:index + 1, 0]),
+                                         np.sum(img_in[startRow:endRow + 1, startCol:index + 1, 1]),
+                                         np.sum(img_in[startRow:endRow + 1, startCol:index + 1, 2])])
+                    index_64_list.append([np.sum(img_in[startRow:endRow + 1, index :endCol + 1, 0]),
+                                         np.sum(img_in[startRow:endRow + 1, index:endCol + 1, 1]),
+                                         np.sum(img_in[startRow:endRow + 1, index:endCol + 1, 2])])
+
             for h in range(height):
                 copy[startRow:endRow+1,startCol:endCol+1][h][index-startCol] = [255.0, 255.0, 255.0] # se
             cut(startRow, startCol, endRow, index, itr+1, intensity, copy)
@@ -155,20 +172,27 @@ def MedianCutSampling(partitions):
 
 #########################
     img_in = loadPFM("../GraceCathedral/grace_latlong.pfm")  # 512 1024 3
+    print(np.sum(img_in[:, :, 0]))
+    print(np.sum(img_in[:, :, 1]))
+    print(np.sum(img_in[:, :, 2]))
 
     print('the shape of the image is',img_in.shape)
 
     height, width, _ = img_in.shape  # 512 1024
     #
-    # copy = np.empty(shape=img_in.shape, dtype=img_in.dtype)
-    #
-    # for y in range(height):
-    #     for x in range(width):
-    #         copy[y, x, :] = img_in[y, x, :]  # Copy pixels
+
 
     intensity = np.empty([height, width])
 
     index_list = []
+    if partitions == 6:
+        index_64_list = []
+        img_64 = np.empty(shape=img_in.shape, dtype=img_in.dtype)
+
+        for y in range(height):
+            for x in range(width):
+                img_64[y, x, :] = [0.0, 0.0, 0.0]  # Copy pixels
+
     for i in range(height):
         # temp = 0
         for j in range(width):
@@ -178,23 +202,51 @@ def MedianCutSampling(partitions):
 
    # set a 5*5 grid
     for item in index_list:
-        print (item)
-        i,j = item[0],item[1]
+        i, j = item[0], item[1]
         img_in[i][j] = [0.0, 0.0, 1.0]
-        for row in range(i-2,i+3):
-            for col in range(j-2,j+3):
-                if (row == i-2 or row ==i+2 or col ==j-2 or col == j + 2 ):
-
+        for row in range(i - 2, i + 3):
+            for col in range(j - 2, j + 3):
+                if (row == i - 2 or row == i + 2 or col == j - 2 or col == j + 2):
                     img_in[row][col] = [0.0, 0.0, 1.0]
+    writePFM('../GraceCathedral/part3_partisons' + str(np.power(2, partitions)) + '.pfm', img_in)
+
+    if partitions == 6:
+        for counter,item in enumerate(index_list):
+
+            i,j = item[0],item[1]
+            img_64[i][j] = index_64_list[counter]
+            print (i,j)
+            print (index_64_list[counter])
+            # for row in range(i-2,i+3):
+            #     for col in range(j-2,j+3):
+            #         if (row == i-2 or row ==i+2 or col ==j-2 or col == j + 2 ): # set a 5*5 window
+            #
+            #             img_64[row][col] = index_64_list[counter]
+
+
+        writePFM('../GraceCathedral/special_64_64' + str(np.power(2, partitions)) + '.pfm', img_64)
+
+        print (len(index_list))
+        print (len(index_64_list))
+        R = np.sum(img_64[:, :, 0])
+        G =np.sum(img_64[:, :, 1])
+        B =np.sum(img_64[:, :, 2])
+        print(R, G, B)
+
+        img_64[:,:,0] = (img_64[:,:, 0]/R ) * 255
+        print img_64[0,0,0]
+        img_64[:,:,1] = (img_64[:,:, 1]/R) * 255
+        img_64[:,:,2] = (img_64[:,:, 2]/R) * 255
+
+        writePFM('../GraceCathedral/special_64_64_normlised' + str(np.power(2, partitions)) + '.pfm', img_64)
 
 
 
 
-    writePFM('../GraceCathedral/part3_partisons'+str(np.power(2,partitions))+'.pfm', img_in)
 
 
 if '__main__' == __name__:
-    for i in [1,2,3,4,5,6,7,8]:
+    for i in [6]:
         print ('partisons' +str(np.power(2,i)))
         MedianCutSampling(i)
 
