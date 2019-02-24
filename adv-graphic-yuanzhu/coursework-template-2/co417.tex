@@ -1,0 +1,82 @@
+\documentclass[12pt,twoside]{article}
+
+\usepackage{subfig}
+\newcommand{\reporttitle}{CO417 Advance Computing Graphics}
+\newcommand{\reportauthor}{Yuan Zhu (Part 1,2) \\Jinwei Zhang (Part 3,4)}
+\newcommand{\reporttype}{Assignment 2}
+
+\input{includes}
+\input{notation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+% front page 
+\input{titlepage}
+
+\section{Generate plots of Fresnel reflectance}
+    The task of first part of this assignment is to generate plots of Fresnel Reflectance for dielectric materials. \\
+    Given incident angle $\theta_i$, index of refractions $\eta_i$ and $\eta_t$, refraction angle can be calculated as $\theta_t = arcsin(\frac{\eta_i}{\eta_t}sin\theta_i)$. The corresponding parallel and perpendicular polarized reflectance can be calculated as:
+    
+        $$R_{\parallel} = |\frac{\eta_tcos\theta_i-\eta_icos\theta_t}{\eta_tcos\theta_i+\eta_icos\theta_t}|^2$$
+        $$R_{\bot} = |\frac{\eta_icos\theta_i-\eta_tcos\theta_t}{\eta_icos\theta_i+\eta_tcos\theta_t}|^2$$
+        
+    The unpolarized reflectance is then be $F_r = \frac{R_{\parallel}+R_{\bot}}{2}$. 
+\begin{figure}[htbp]
+        \centering
+        
+        \begin{minipage}{7cm}
+            \includegraphics[width = 2.8in]{./CO417_Figure/01.png} 
+            \caption{Fresnel and Schlick's Apprx. of $\eta_i$=1.0 and $\eta_t$ = 1.45}
+        \end{minipage}
+        \begin{minipage}{7cm}
+            \includegraphics[width = 2.8in]{./CO417_Figure/02.png} 
+            \caption{Fresnel and Schlick's Apprx. of $\eta_i$=1.45 and $\eta_t$ = 1.0} 
+        \end{minipage}
+     
+\end{figure}\\
+As is shown in Figure 1, the Parallel and Perpendicular Polarized reflectance according to incident angle are plotted as blue and yellow solid curves and the unpolarized reflectance is plotted as green solid curves. For index of refractions in Figure 1, the black dotted line represents Brewster's angle, where $R_{\parallel}=0$, which has a value of $\theta_B = arctan\frac{\eta_t}{\eta_i} = 55.41 (^{\circ})$. For Figure 2, the black dotted line is Critical angle, representing the smallest angle that occurs total internal reflection. The value of Critical andgle in Figure 2 is $\theta_C = arcsin\frac{\eta_t}{\eta_i} = 43.60 (^{\circ})$.\\ 
+The Schlick's Approximation is shown in red dotted line and calculated by $F_r(cos\theta)=R_0 + (1-R_0)(1-cos\theta)^5$ with $R_0$ the reflectance at normal incident. According to Figure 1 and 2, it could be concluded that the Schlick's method approximates unpolarized reflectance very well. In addition, the advantage of Schlick's Apprx is to acquire approximated reflactance without estimating index of refractions.
+
+\newpage
+
+\section{Generate MC samples according to an EM}
+The second part of the assignment is to generate a number of Monte-Carlo samples from lat-long format environment map Grace Cathedral. The generating method is based on Probability Density Function and Cumulative Density Function. For each pixel in lat-long map, the intensity of the pixel is calculated by $Intensity_{ij} = \frac{R+G+B}{3}$. After that, considering the shape of lat-long format, primitive PDF of each pixel should be scaled by its solid angle $\theta (0-\pi)$: $p(x_{ij}) = Intensity_{ij} * sin\theta$. \\
+After the procedure, the 2D PDF of the lat-long EM has been generated. In addition, a 1D PDF that contains sum likelihood of each row is generated for row selection later ($p(r_i) = \sum_1^jp(x_{ij})$). Here, to acquire a proper CDF later, 2D PDF will be normalised as the sum of likelihood of each row equals to 1 ($\sum_1^jp(x_{ij})=1$).The 1D row PDF is normalised as well ($\sum_1^ip(r_{i})=1$).\\
+In order to sample from PDF, 1D CDF across rows will be generated next. For each sample, firstly, use uniform random variate $u_i\in [0,1]$ to decide which row to sample. CDF value of row $r_m$ is calculated by $C(r_m) = \sum_1^m p(r_m)$. Apply same operation to rows of 2D PDF to acquire 2D CDF. Given that each likelihood is greater or equal than 0, $C(r_{m+1}) > C(r_{m})$ for each $m$. Therefore, $r_i=C^{-1}(u_i)$ and row number ($i$) of the sample is acquired. Next, generate another uniform random variate $u_j\in [0,1]$ and use the same method to acquire sample column. Extract row $i$ from 2D CDF and $x_{ij} = C^{-1}(u_j)$. For the assignment, 64, 256 and 1024 samples maps are generated corrspondingly.\\
+After generation of samples, apply scaling and gamma correction to acquire final output. Here the step=6 and gamma=2.2. For clarity, a 5X5 neighbour window around samples are set to blue alone with samples.\\
+For 256 samples, a map only contains sample points and 5X5 windows set to sample RGB values are generated as well.\\
+
+
+    \begin{figure}[H]
+        \centering % this centers the figure
+            \includegraphics[width = 6in]{./CO417_Figure/MC_64.png} 
+            \caption{64 Samples with Grace Cathedral EM} % caption of the figure
+            \label{fig:imperial figure} % a label. When we refer to this label from the text, the figure number is included automatically
+            
+             \end{figure}
+
+            \newpage    
+            \begin{figure}[H]
+        \centering % this centers the figure
+            \includegraphics[width = 6in]{./CO417_Figure/MC_256.png} 
+            \caption{256 Samples with Grace Cathedral EM} % caption of the figure
+            \label{fig:imperial figure} % a label. When we refer to this label from the text, the figure number is included automatically        
+ 
+            \includegraphics[width = 6in]{././CO417_Figure/SAMPLE_MAP_256.png} 
+            \caption{256 Samples extracted from Grace Cathedral EM} % caption of the figure
+            \label{fig:imperial figure} % a label. When we refer to this label from the text, the figure number is included automatically
+
+            \includegraphics[width = 6in]{././CO417_Figure/MC_1024.png} 
+            \caption{1024 Samples with Grace Cathedral EM} % caption of the figure
+            \label{fig:imperial figure} % a label. When we refer to this label from the text, the figure number is included automatically
+        \end{figure}
+        
+According to Figure 3 to 6, it can be concluded that comparing to dim pixels, brighter pixels have greater chance to be sampled. Comparing to rows closing to top and ground, rows closing to centre have greater chance to be selected. 
+      
+\end{document}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
