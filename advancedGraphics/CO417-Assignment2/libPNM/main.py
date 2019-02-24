@@ -260,9 +260,9 @@ if '__main__' == __name__:
     #     print ('partisons' +str(np.power(2,i)))
     #     # MedianCutSampling(i)
     #     Gamma('../GraceCathedral/part3_partisons' + str(np.power(2, i)) + '.pfm', 1.8, 3, '../GraceCathedral/part3_partisons_gamma' + str(np.power(2, i)) + '.ppm')
-    #
+    #../GraceCathedral/simple_sphere_Sp'+str(i)+'.pfm
 
-    for i in [4,8,16,32]:
+    for i in [4,8,16,32,64]:
         Gamma('../GraceCathedral/simple_sphere_Sp'+str(i)+'.pfm', 1.8, 3,
               '../GraceCathedral/simple_sphere_Sp'+str(i)+'.ppm')
     pass
